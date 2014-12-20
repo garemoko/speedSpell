@@ -22,9 +22,6 @@ if (!$.isEmptyObject(queryStringParams)) {
 	        }
 	    );
 
-	//we don't want tincanjs to pass 'lockedConfig' or any other addiitonal qs parameters to the LRS
-	tincan.recordStores[0].extended = null;
-
 	tincan.sendStatement({
 		verb: {
 			id: "http://adlnet.gov/expapi/verbs/initialized",
@@ -34,10 +31,7 @@ if (!$.isEmptyObject(queryStringParams)) {
 }
 
 $(document).ready(function(){
-	$('#learner_key').val(TinCan.Utils.getUUID());
-	$('#registration').val(TinCan.Utils.getUUID());
-
-	processQueryString();
+	setupConfigPanel();
 
 	$('#toolbox .cog').click(function(){
 		if (configPanelOpen){
@@ -59,15 +53,14 @@ $(document).ready(function(){
 		var thisURL = location.protocol + '//' + location.host + location.pathname, 
 		querystringObj = {
 			endpoint: $('#lrs_endpoint').val(),
-			actor: JSON.stringify({
+			actor: JSON.stringify({ //TODO: this method is causing the actor name to have spaces replaced with +
 				name: $('#learner_name').val(),
 				account: {
 					name: $('#learner_key').val(),
 					homePage: thisURL
 				}
 			}),
-			registration: $('#registration').val(),
-			lockedConfig: $('#lock_settings').is(':checked')
+			registration: $('#registration').val()
 		};
 		if ( (!$.isEmptyObject(queryStringParams)) && (queryStringParams.hasOwnProperty('auth')) && (queryStringParams.auth != '') ){
 			querystringObj.auth = queryStringParams.auth;
@@ -94,22 +87,28 @@ function openConfigPanel(){
 	$('#toolbox .configpanel').show();
 	$('.content').hide();
 	configPanelOpen = true;
-	$('#lrs_endpoint').focus();
 }
 
-function processQueryString(){
-	if (!$.isEmptyObject(queryStringParams)) {
-		var learner= JSON.parse(queryStringParams.actor)
-		if (queryStringParams.lockedConfig == "true"){
-			$('#toolbox .cog').hide();
-		}
+function setupConfigPanel(){
+	if ($.isEmptyObject(queryStringParams)) {
+		$('#registration').val(TinCan.Utils.getUUID());
+		$('.lrs_setting').show();
+		$('.learner_setting').hide();
+	} else {
+		var learner= JSON.parse(queryStringParams.actor);
+		if (learner.name == ""){
+		$('#learner_key').val(TinCan.Utils.getUUID());
 		$('#lrs_endpoint').val(queryStringParams.endpoint);
-		$('#learner_name').val(learner.name);
-		$('#learner_key').val(learner.account.name);
 		$('#registration').val(queryStringParams.registration);
-		if (queryStringParams.auth != ""){
-			$('#lrs_key, #lrs_secret, #lrs_endpoint').prop('disabled', true);
-			$('#lrs_key, #lrs_secret').val("*****");
+		$('.lrs_setting').hide();
+		$('.learner_setting').show();
+		openConfigPanel();
+		} else {
+			$('#lrs_endpoint').val(queryStringParams.endpoint);
+			$('#learner_name').val(learner.name);
+			$('#learner_key').val(learner.account.name);
+			$('#registration').val(queryStringParams.registration);
+			$('#toolbox .cog').hide();
 		}
 	}
 }

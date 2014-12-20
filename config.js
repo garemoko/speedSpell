@@ -1,11 +1,6 @@
 var DURATION = 60,
-WORDS = [
-	"I",
-	"up",
-	"look"
-],
+AUDIO_EXT = ".m4a",
 IGNORECASE = true,
-SHOWWORD=false,
 ROOT_ACTIVITY= {
 	id: "http://garemoko.github.io/speedSpell/",
 	definition: {
@@ -13,7 +8,7 @@ ROOT_ACTIVITY= {
 			en: "speedSpell"
 		},
 		description:{
-			en: "A spelling game for 6 to 7 year olds."
+			en: "A learning game for 6 to 7 year olds."
 		},
 		type: "http://activitystrea.ms/schema/1.0/game"
 	}

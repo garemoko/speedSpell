@@ -6,6 +6,8 @@
 <script src="config.js"></script>
 <script src="jquery.js"></script>
 <script src="tincan-min.js"></script>
+<script src="math.js"></script>
+<script src="questions.js"></script>
 <script src="quiz.js"></script>
 <script src="sstc.js"></script>
 
@@ -16,48 +18,42 @@
 			<div class="configPanel">
 				<h2>Settings</h2>
 					<table>
-						<tr>
+						<tr class="lrs_setting">
 							<td class="label">LRS endpoint:</td>
 							<td>
 								<input type="text" name="lrs_endpoint" id="lrs_endpoint" class="lrs_endpoint" />
 							</td>
 						</tr>
-						<tr>
+						<tr class="lrs_setting">
 							<td class="label">LRS Basic Key:</td>
 							<td>
 								<input type="text" name="lrs_key" id="lrs_key" class="lrs_key" />
 							</td>
 						</tr>
-						<tr>
+						<tr class="lrs_setting">
 							<td class="label">LRS Basic Secret:</td>
 								<td>
 							<input type="text" name="lrs_secret" id="lrs_secret" class="lrs_secret" />
 							</td>
 						</tr>
-						<tr>
-							<td class="label">Learner name:</td>
-							<td>
-								<input type="text" name="learner_name" id="learner_name" class="learner_name" />
-							</td>
-						</tr>
-						<tr>
-							<td class="label">Learner unique key:</td>
-							<td>
-								<input type="text" name="learner_key" id="learner_key" class="learner_key" />
-								<input type="button" value="new" name="new_learner_key" id="new_learner_key" class="button"/>
-							</td>
-						</tr>
-						<tr>
+						<tr class="lrs_setting">
 							<td class="label">Registration:</td>
 							<td>
 								<input type="text" name="registration" id="registration" class="registration" />
 								<input type="button" value="new" name="new_registration" id="new_registration" class="button"/>
 							</td>
 						</tr>
-						<tr>
-							<td class="label">Lock settings?</td>
+						<tr class="learner_setting">
+							<td class="label">Learner name:</td>
 							<td>
-								<input type="checkbox" name="lock_settings" id="lock_settings" class="lock_settings" />
+								<input type="text" name="learner_name" id="learner_name" class="learner_name" />
+							</td>
+						</tr>
+						<tr class="learner_setting">
+							<td class="label">Learner unique key:</td>
+							<td>
+								<input type="text" name="learner_key" id="learner_key" class="learner_key" />
+								<input type="button" value="new" name="new_learner_key" id="new_learner_key" class="button"/>
 							</td>
 						</tr>
 					</table>

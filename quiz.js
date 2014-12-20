@@ -2,7 +2,7 @@ Array.prototype.randomElement = function () {
     return this[Math.floor(Math.random() * this.length)]
 }
 
-var refreshIntervalId, seconds = DURATION, score = 0, incorrect=0, processKeyup;
+var refreshIntervalId, seconds = DURATION, score = 0, incorrect=0, processKeyup, QUESTIONS=[];
 
 if (IGNORECASE){
 	processKeyup = processKeyup_ignorecase;
@@ -11,27 +11,40 @@ if (IGNORECASE){
 }
 
 $(document).ready(function(){
-	$.each(WORDS, function( index, word ) {
-		$('body').append('<audio id="audio-'+word+'" src="words/'+word+'.m4a" preload="auto"></audio>');
-	});
 	resetQuiz();
 	$('#restart').click(resetQuiz);
 	$('#answer').keyup(processKeyup);
 
 })
 
+function processKeyup(event){
+	var ignoreCaseStr = $('#answer').attr('data-ignoreCase'),
+	ignoreCaseBoo = IGNORECASE;
+
+	if (ignoreCaseStr =="true"){
+		ignoreCaseBoo = true;
+	} else if (ignoreCaseStr =="false") {
+		ignoreCaseBoo = false;
+	}
+
+	if (ignoreCaseBoo){
+		processKeyup_ignorecase(event);
+	} else  {
+		processKeyup_casesensitive(event);
+	}
+}
+
 function processKeyup_ignorecase (event) {
 	var lentocompare = $('#answer').val().length,
 	answerChar = $('#answer').attr('data-correctanswer').substring((lentocompare -1),lentocompare).toLowerCase(),
 	responseChar = $('#answer').val().substring((lentocompare -1),lentocompare).toLowerCase(),
-	word = $('#answer').attr('data-correctanswer');
+	correctAnswer = $('#answer').attr('data-correctanswer');
 	if (answerChar != responseChar) {
-		//console.log({s:answerChar,a:responseChar});
-		answerWrong(word);
+		answerWrong(correctAnswer);
 		$('#answer').val('');
 	}
 	else {
-		if ($('#answer').val().toLowerCase() == word.toLowerCase())
+		if ($('#answer').val().toLowerCase() == correctAnswer.toLowerCase())
 		{
 			answerCorrect();
 			resetQuestion();
@@ -43,14 +56,13 @@ function processKeyup_casesensitive (event) {
 	var lentocompare = $('#answer').val().length,
 	answerChar = $('#answer').attr('data-correctanswer').substring((lentocompare -1),lentocompare),
 	responseChar = $('#answer').val().substring((lentocompare -1),lentocompare),
-	word = $('#answer').attr('data-correctanswer');
+	correctAnswer = $('#answer').attr('data-correctanswer');
 	if (answerChar != responseChar) {
-		//console.log({s:answerChar,a:responseChar});
-		answerWrong(word);
+		answerWrong(correctAnswer);
 		$('#answer').val('');
 	}
 	else {
-		if ($('#answer').val() == word)
+		if ($('#answer').val() == correctAnswer)
 		{
 			answerCorrect();
 			resetQuestion();
@@ -59,21 +71,25 @@ function processKeyup_casesensitive (event) {
 }
 
 function resetQuestion(){
-	var word = WORDS.randomElement();
-	if (SHOWWORD){
-		$('#question').text("Spell '" + word + "'");
-	}
-	else 
-	{
-		$('#question').text("Listen!");
-	}
-	$('#answer').attr('data-correctanswer', word);
+	var question = QUESTIONS.randomElement();
+	$('#question').text(question.text);
+	$('#answer').attr('data-correctanswer', question.correctResponses[0]); //TODO: handle multiple right answers
+	$('#answer').attr('data-ignoreCase', question.ignoreCase);
 	$('#answer').val('');
-	$('#audio-' + word)[0].play();
+	if (question.hasOwnProperty('audio')) {
+		$('#audio-' + question.audio)[0].play();
+	}
 	$('#answer').focus()
 }
 
 function resetQuiz(){
+	QUESTIONS = buildQuestionSet();
+	$('audio').remove();
+	$.each(QUESTIONS, function( index, question ) {
+		if (question.hasOwnProperty('audio')) {
+			$('body').append('<audio id="audio-'+question.audio+'" src="words/'+question.audio+AUDIO_EXT+'" preload="auto"></audio>');
+		}
+	});
 	resetQuestion();
 	score = 0;
 	incorrect = 0;
@@ -98,12 +114,6 @@ function tick(){
 	}
 }
 
-
-function calculateAnswer(question){
-	var math = mathjs();
-	return math.eval(question);
-}
-
 function answerCorrect(){
 	$('body').css('background-color', '#22aa22');
 	score++;
@@ -113,7 +123,10 @@ function answerCorrect(){
 
 function answerWrong(word){
 	$('body').css('background-color', '#aa2222');
-	$('#audio-' + word)[0].play();
+	var matchingAudio = $('#audio-' + word);
+	if (matchingAudio.length > 0) {
+		matchingAudio[0].play();
+	} 
 	incorrect++;
 	updateAccuracy();
 	
