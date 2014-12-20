@@ -1,0 +1,92 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0; 
+}
+body {
+	font-family:Comic Sans MS;
+	color:fff;
+	background-color:#333;
+}
+.main {
+	margin: 200px auto;
+	text-align:center;
+	font-size:6em;
+	vertical-align:middle;
+}
+#answer{
+	vertical-align:middle;
+	font-size: 1em;
+	width:300px;
+	font-family:Comic Sans MS;
+}
+#dash{
+	position: fixed;
+	top: 1em;
+	right: 1em;
+	background-color:#fff;
+	font-size:2em;
+	width:150px;
+	overflow:hidden;
+	padding:10px;
+}
+.dashlabel {
+	color: #333;
+}
+#timer{
+	color: #aa2222;
+}
+#score{
+	color: #22aa22;
+}
+#accuracy{
+	color: #2222aa;
+}
+#restart{
+	cursor: pointer;
+	width:300px;
+	height:150px;
+	padding-top: 25px;
+	margin:auto;
+	background-color:#fff;
+	color: #22aa22;
+	text-align:center;
+	vertical-align:middle;
+	font-size: 0.7em;
+	line-height: 0.9em;
+}
+#toolbox .configPanel{
+	display:none;
+	position: fixed;
+	top: 1em;
+	left: 4em;
+	background-color:#fff;
+	color:#333;
+	font-size:0.8em;
+	overflow:hidden;
+	padding:10px;
+}
+#toolbox .configPanel table{
+	color: #333;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+#toolbox .configPanel .button{
+	color: #fff;
+	background-color: #5bc0de;
+	border-color: #46b8da;
+	border: 1px solid transparent;
+	border-radius: 4px;
+}
+#toolbox .configPanel .button_primary{
+	background-color: #337ab7;
+	border-color: #2e6da4;
+}
+#toolbox .configPanel .button_red{
+	background-color: #d9534f;
+	border-color: #d43f3a;
+}
+
+#toolbox .configPanel input[type=text] {
+	width:300px;
+}

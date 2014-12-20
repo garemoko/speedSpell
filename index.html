@@ -1,225 +1,87 @@
 <html>
 <head>
 <meta name="viewport" content="width=600, initial-scale=1">
-<style>
-	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0; 
-	}
-	body {
-		font-family:Comic Sans MS;
-		color:fff;
-		background-color:#333;
-	}
-	.main {
-		margin: 200px auto;
-		text-align:center;
-		font-size:6em;
-		vertical-align:middle;
-	}
-	#answer{
-		vertical-align:middle;
-		font-size: 1em;
-		width:300px;
-		font-family:Comic Sans MS;
-	}
-	#dash{
-		position: fixed;
-		top: 1em;
-		right: 1em;
-		background-color:#fff;
-		font-size:2em;
-		width:150px;
-		overflow:hidden;
-		padding:10px;
-	}
-	.dashlabel {
-		color: #333;
-	}
-	#timer{
-		color: #aa2222;
-	}
-	#score{
-		color: #22aa22;
-	}
-	#accuracy{
-		color: #2222aa;
-	}
-	#restart{
-		cursor: pointer;
-		width:300px;
-		height:150px;
-		padding-top: 25px;
-		margin:auto;
-		background-color:#fff;
-		color: #22aa22;
-		text-align:center;
-		vertical-align:middle;
-		font-size: 0.7em;
-		line-height: 0.9em;
-	}
-	
+<link rel="stylesheet" type="text/css" href="main.css">
 
-</style>
-
+<script src="config.js"></script>
 <script src="jquery.js"></script>
-
-<script>
-Array.prototype.randomElement = function () {
-    return this[Math.floor(Math.random() * this.length)]
-}
-
-var DURATION = 60,
-WORDS = [
-	"I",
-	"up",
-	"look"
-],
-IGNORECASE = true,
-SHOWWORD=false;
-
-var refreshIntervalId, seconds = DURATION, score = 0, incorrect=0, processKeyup;
-
-if (IGNORECASE){
-	processKeyup = processKeyup_ignorecase;
-} else {
-	processKeyup = processKeyup_casesensitive;
-}
-
-$(document).ready(function(){
-	$.each(WORDS, function( index, word ) {
-		console.log('yo');
-		$('body').append('<audio id="audio-'+word+'" src="words/'+word+'.m4a" preload="auto"></audio>');
-	});
-	resetQuiz();
-	$('#restart').click(resetQuiz);
-	$('#answer').keyup(processKeyup);
-
-})
-
-function processKeyup_ignorecase (event) {
-	var lentocompare = $('#answer').val().length,
-	answerChar = $('#answer').attr('data-correctanswer').substring((lentocompare -1),lentocompare).toLowerCase(),
-	responseChar = $('#answer').val().substring((lentocompare -1),lentocompare).toLowerCase(),
-	word = $('#answer').attr('data-correctanswer');
-	if (answerChar != responseChar) {
-		//console.log({s:answerChar,a:responseChar});
-		answerWrong(word);
-		$('#answer').val('');
-	}
-	else {
-		if ($('#answer').val().toLowerCase() == word.toLowerCase())
-		{
-			answerCorrect();
-			resetQuestion();
-		}
-	}		
-}
-
-function processKeyup_casesensitive (event) {
-	var lentocompare = $('#answer').val().length,
-	answerChar = $('#answer').attr('data-correctanswer').substring((lentocompare -1),lentocompare),
-	responseChar = $('#answer').val().substring((lentocompare -1),lentocompare),
-	word = $('#answer').attr('data-correctanswer');
-	if (answerChar != responseChar) {
-		//console.log({s:answerChar,a:responseChar});
-		answerWrong(word);
-		$('#answer').val('');
-	}
-	else {
-		if ($('#answer').val() == word)
-		{
-			answerCorrect();
-			resetQuestion();
-		}
-	}
-}
-
-function resetQuestion(){
-	var word = WORDS.randomElement();
-	if (SHOWWORD){
-		$('#question').text("Spell '" + word + "'");
-	}
-	else 
-	{
-		$('#question').text("Listen!");
-	}
-	$('#answer').attr('data-correctanswer', word);
-	$('#answer').val('');
-	$('#audio-' + word)[0].play();
-	$('#answer').focus()
-}
-
-function resetQuiz(){
-	resetQuestion();
-	score = 0;
-	incorrect = 0;
-	seconds = DURATION;
-	$('#score').html(score);
-	$('#timer').html(seconds);
-	$('#accuracy').html('');
-	$('#feedback').hide();
-	$('#quiz').show();
-	refreshIntervalId = setInterval(tick, 1000);
-}
-
-function tick(){
-	seconds--;
-	$('#timer').html(seconds);
-	
-	if (seconds == 0){
-		clearInterval(refreshIntervalId);
-		$('body').css('background-color', '#333');
-		$('#quiz').hide();
-		$('#feedback').show();
-	}
-}
-
-
-function calculateAnswer(question){
-	var math = mathjs();
-	return math.eval(question);
-}
-
-function answerCorrect(){
-	$('body').css('background-color', '#22aa22');
-	score++;
-	$('#score').html(score);
-	updateAccuracy();
-}
-
-function answerWrong(word){
-	$('body').css('background-color', '#aa2222');
-	$('#audio-' + word)[0].play();
-	incorrect++;
-	updateAccuracy();
-	
-}
-
-function updateAccuracy(){
-	var accuracyPerc = Math.round(score/(score+incorrect)*100)
-	$('#accuracy').html(accuracyPerc + '%');
-}
-
-</script>
+<script src="tincan-min.js"></script>
+<script src="quiz.js"></script>
+<script src="sstc.js"></script>
 
 </head>
 	<body>
-		<div id='quiz' class='main'>
-			<span id="question"></span>
-			<input type="text" name="answer" id="answer" value="" data-correctAnswer="0">
-		</div>
-		<div id='feedback' class='main'>
-			<p>Time's up!</p>
-			<div id="restart">
-				Start again. 
+		<div id="toolbox">
+			<img class="cog" src="cog_ffffff_30.png" />
+			<div class="configPanel">
+				<h2>Settings</h2>
+					<table>
+						<tr>
+							<td class="label">LRS endpoint:</td>
+							<td>
+								<input type="text" name="lrs_endpoint" id="lrs_endpoint" class="lrs_endpoint" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label">LRS Basic Key:</td>
+							<td>
+								<input type="text" name="lrs_key" id="lrs_key" class="lrs_key" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label">LRS Basic Secret:</td>
+								<td>
+							<input type="text" name="lrs_secret" id="lrs_secret" class="lrs_secret" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label">Learner name:</td>
+							<td>
+								<input type="text" name="learner_name" id="learner_name" class="learner_name" />
+							</td>
+						</tr>
+						<tr>
+							<td class="label">Learner unique key:</td>
+							<td>
+								<input type="text" name="learner_key" id="learner_key" class="learner_key" />
+								<input type="button" value="new" name="new_learner_key" id="new_learner_key" class="button"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="label">Registration:</td>
+							<td>
+								<input type="text" name="registration" id="registration" class="registration" />
+								<input type="button" value="new" name="new_registration" id="new_registration" class="button"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="label">Lock settings?</td>
+							<td>
+								<input type="checkbox" name="lock_settings" id="lock_settings" class="lock_settings" />
+							</td>
+						</tr>
+					</table>
+					<input type="button" value="Save to address bar" name="save_config" id="save_config" class="button button_primary"/>
+					<input type="button" value="Cancel" name="cancel" id="cancel" class="button button_red"/>
+				</div>
 			</div>
 		</div>
-		<div id='dash'>
-			<span class='dashlabel'>Time:</span><span id='timer'></span>
-			<br/><span class='dashlabel'>Points:</span><span id='score'></span>
-			<br/><span class='dashlabel'>Acc:</span><span id='accuracy'></span>
+		<div class="content">
+			<div id='quiz' class='main'>
+				<span id="question"></span>
+				<input type="text" name="answer" id="answer" value="" data-correctAnswer="0">
+			</div>
+			<div id='feedback' class='main'>
+				<p>Time's up!</p>
+				<div id="restart">
+					Start again. 
+				</div>
+			</div>
+			<div id='dash'>
+				<span class='dashlabel'>Time:</span><span id='timer'></span>
+				<br/><span class='dashlabel'>Points:</span><span id='score'></span>
+				<br/><span class='dashlabel'>Acc:</span><span id='accuracy'></span>
+			</div>
 		</div>
 	</body>
 </html>
